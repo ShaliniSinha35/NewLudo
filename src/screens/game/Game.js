@@ -80,7 +80,7 @@ export default class Game extends Component {
             blueHeart: 3,
             greenHeart: 3,
             yellowHeart: 3,
-            remainingTime: 60, // 3 minutes in seconds
+            remainingTime: 180, // 3 minutes in seconds
             winnerArray: [],
             status: "warning",
             title: "You missed a turn!",
@@ -168,6 +168,10 @@ export default class Game extends Component {
             );
         });
 
+        Socket.on('dice_roll_result', (number) => {
+            this.setState({diceNumber:number})
+             });
+
         Socket.on('endGame', async (value) => {
             if (value) {
                 await AsyncStorage.setItem('result', JSON.stringify(value))
@@ -182,6 +186,17 @@ export default class Game extends Component {
                 // console.log('Failed to clear keys');
             }
         });
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        // Check if the 'turn' state has changed
+        if (prevState.diceNumber !== this.state.diceNumber) {
+
+            Socket.on('dice_roll_result', (number) => {
+                this.setState({diceNumber:number})
+                 });
+    
+        }
     }
 
     componentWillUnmount() {
@@ -666,7 +681,7 @@ export default class Game extends Component {
         const { remainingTime, turn } = this.state;
         const { redName, yellowName, greenName, blueName } = this.props;
 
-        console.log("598", turn)
+        // console.log("598", turn)
 
         // console.log("614", turn,this.state.setTurn)
 
@@ -837,13 +852,10 @@ export default class Game extends Component {
     async onDiceRoll() {
 
 
-
-        Socket.on('rollDice', (data) => {
-            // Broadcast the dice roll event to all clients in the room
-            io.to(data.roomId).emit('diceRolled', { playerId: data.playerId, diceNumber: data.diceNumber });
-
-        });
-        const { diceRollTestDataIndex, diceRollTestData, animateForSelection } = this.state;
+        Socket.emit('roll_dice');
+       let diceValue =1;
+        // Socket.emit('roll_dice');
+        const { diceRollTestDataIndex, diceRollTestData, animateForSelection, diceNumber } = this.state;
 
         if (animateForSelection) {
             return;
@@ -876,39 +888,65 @@ export default class Game extends Component {
             useNativeDriver: false,
         }).start(async () => {
             // Animation completed, update state and perform additional logic
-            this.setState({ isRolling: false, diceNumber: this.getRandomInt(), diceRollTestDataIndex: updatedDiceRollTestDataIndex });
-            Socket.emit('updateGameState', this.state);
-            // Delay before additional logic (100ms in your original code)
-            await new Promise(resolve => setTimeout(resolve, 100));
 
-            const { moves, diceNumber, turn, extraChance, redScore, yellowScore, greenScore, blueScore } = this.state;
-            moves.push(diceNumber);
-            // console.log("dicenumber", diceNumber)
+                   Socket.on('dice_roll_result', async(number) => {
+                   diceValue = number
+                  this.setState({diceNumber:number})
 
-
-
-            if (diceNumber === 6) {
-
-                this.setState({ isRolling: false, moves: moves, extraChance: extraChance + 1, isWaitingForDiceRoll: false }, () => {
-                    Socket.emit('updateGameState', this.state);
-                    this.updatePlayerPieces(this.state[turn])
-
+           
                 });
 
-            }
-            else {
-                this.setState({ isRolling: false, moves: moves, isWaitingForDiceRoll: false, extraChance: 0 }, () => {
-                    Socket.emit('updateGameState', this.state);
-                    this.updatePlayerPieces(this.state[turn])
+                this.setState({ isRolling: false,  diceRollTestDataIndex: updatedDiceRollTestDataIndex });
+                Socket.emit('updateGameState', this.state);
+                // Delay before additional logic (100ms in your original code)
+                await new Promise(resolve => setTimeout(resolve, 100));
+    
+                const { moves,  turn, extraChance, redScore, yellowScore, greenScore, blueScore } = this.state;
+                moves.push(this.state.diceNumber);
+                console.log("902",moves)
+   
+   
+   
+   
+                        this.setState({ isRolling: false, moves: moves, isWaitingForDiceRoll: false, extraChance: 0 }, () => {
+                       Socket.emit('updateGameState', this.state);
+                       this.updatePlayerPieces(this.state[turn])
+   
+  
+  
+              // console.log("dicenumber", diceNumber)
+  
+               
+  
+  
+              // if (diceNumber === 6) {
+  
+              //     this.setState({ isRolling: false, moves: moves, extraChance: extraChance + 1, isWaitingForDiceRoll: false }, () => {
+              //         Socket.emit('updateGameState', this.state);
+              //         this.updatePlayerPieces(this.state[turn])
+  
+              //     });
+  
+              // }
+              // else {
+              //     this.setState({ isRolling: false, moves: moves, isWaitingForDiceRoll: false, extraChance: 0 }, () => {
+              //         Socket.emit('updateGameState', this.state);
+              //         this.updatePlayerPieces(this.state[turn])
+  
+              //     });
+  
+              // }
+  
+  
+  
+          });
+  
 
-                });
-
-            }
-
+              });
+          
 
 
-        });
-
+           
 
     }
 
@@ -987,7 +1025,7 @@ export default class Game extends Component {
         return countMoveOptions == 1;
     }
 
-    getCountMoveOptions(player) {
+   getCountMoveOptions(player) {
         const { one, two, three, four } = player.pieces;
         // console.log(one, two, three, four)
         const { moves } = this.state;
@@ -1031,7 +1069,7 @@ export default class Game extends Component {
         isMovePossibleForPosition(three.position) ? countOfOptions++ : undefined;
         isMovePossibleForPosition(four.position) ? countOfOptions++ : undefined;
         return countOfOptions;
-    }
+ }
 
     getSinglePossibleMove(player) {
         const { one, two, three, four } = player.pieces;
@@ -1162,12 +1200,9 @@ export default class Game extends Component {
         }
 
 
-
-
         if (piece.position == R1 || piece.position == R9 || piece.position == Y1 || piece.position == Y9 || piece.position == G1 || piece.position == G9 || piece.position == B1 || piece.position == B9) {
             return false;
         }
-
 
 
         const checkIfPositionMatchesExistingPiece = (piece, player) => {

@@ -71,7 +71,7 @@ export default class GameRobot extends Component {
             blueHeart: 3,
             greenHeart: 3,
             yellowHeart: 3,
-            remainingTime: 60, // 3 minutes in seconds
+            remainingTime: 180, // 3 minutes in seconds
             winnerArray: [],
             status: "warning",
             title: "You missed a turn!",
