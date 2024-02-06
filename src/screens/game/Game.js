@@ -210,7 +210,8 @@ export default class Game extends Component {
         // this.clearAllTimers();
         // Socket.off('getTimer');
         // Socket.off('updateTimerState');
-        // Socket.emit('disconnectUser', { user: this.state.activePlayer })
+        // Socket.emit('disconnectSocket', { socket: this.state.currentPlayer })
+        // Socket.emit('disconnectSocket', { socket: this.state.nextPlayer })
     }
 
     startTurnTimer() {

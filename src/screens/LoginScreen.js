@@ -1,4 +1,4 @@
-import { View, Text, ImageBackground, Dimensions, ScrollView, SafeAreaView, StyleSheet, KeyboardAvoidingView, TextInput, TouchableOpacity, Alert } from 'react-native'
+import { View, Text, ImageBackground,Animated, Dimensions, ScrollView, SafeAreaView, StyleSheet, KeyboardAvoidingView, TextInput, TouchableOpacity, Alert } from 'react-native'
 import React, { useState, useEffect } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
@@ -85,6 +85,10 @@ const LoginScreen = () => {
 
 
     };
+
+
+
+   
 
     return (
         <ImageBackground source={require("../../assets/bg.png")} style={{ height: Dimensions.get('screen').height, width: Dimensions.get('screen').width }}>
@@ -214,6 +218,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-between",
     },
+    box: {
+        width: 120,
+        height: 120,
+        borderRadius: 80,
+        backgroundColor: 'black',
+        alignItems:"center"
+      },
     button: {
         width: 200,
         backgroundColor: "#231942",
