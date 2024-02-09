@@ -13,6 +13,7 @@ export default HorizontalCellsContainer = ({
   state,
   onDiceRoll,
   onPieceSelection,
+  isRobot
 }) => {
 
     {
@@ -36,7 +37,7 @@ export default HorizontalCellsContainer = ({
                 backgroundColor={getCellBackgroundColor(cellPosition)}
                 arrow ={getCellArrow(cellPosition, state.red,state.blue,state.green,state.yellow)}
                 safe = {getSafeArea(cellPosition, state.red, state.blue, state.green, state.yellow)}
-                
+                isRobot={isRobot}
                 onPieceSelection={onPieceSelection}
                 state={state}
                 position={cellPosition}

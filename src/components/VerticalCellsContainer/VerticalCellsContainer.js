@@ -7,7 +7,7 @@ import {getCellArrow} from "../../util/getCellArrow"
 import CellBox from "../CellBox/CellBox";
 import getSafeArea from '../../util/getSafeArea';
 import GotiCount from '../../util/GotiCount';
-export default VerticalCellsContainer = ({position,onPieceSelection,state}) =>{
+export default VerticalCellsContainer = ({position,onPieceSelection,state,isRobot}) =>{
 
     const column1 = position == TOP_VERTICAL? [R11,R10,R9,R8,R7,R6]:[B5,B4,B3,B2,B1,G13];
     const column2 = position == TOP_VERTICAL? [R12 ,Y14,Y15,Y16,Y17,Y18]:[B18,B17,B16,B15,B14,G12];
@@ -23,7 +23,7 @@ export default VerticalCellsContainer = ({position,onPieceSelection,state}) =>{
                         <CellBox backgroundColor={getCellBackgroundColor(cellPosition)}
                              arrow ={getCellArrow(cellPosition, state.red,state.blue,state.green,state.yellow)}
                              safe = {getSafeArea(cellPosition, state.red,state.blue,state.green,state.yellow)}
-                           
+                              isRobot={isRobot}
                             onPieceSelection={onPieceSelection}
                             state={state}
                             position={cellPosition}

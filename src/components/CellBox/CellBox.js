@@ -45,7 +45,7 @@ const countGotiAtPosition = (state, position) => {
     return { count };
 };
 
-export default CellBox = ({ backgroundColor, position, onPieceSelection, state, arrow, safe, gotiCounter }) => {
+export default CellBox = ({ backgroundColor, position, onPieceSelection, state, arrow, safe, gotiCounter,isRobot }) => {
 
 
 
@@ -248,11 +248,26 @@ export default CellBox = ({ backgroundColor, position, onPieceSelection, state, 
     }
 
 
-    applyAnimationIfNeeded();
+
     let color = state.isWaitingForDiceRoll ? backgroundColor : highlighColor;
 
 
     const { turn } = state;
+
+    // console.log("cellbox",turn)
+
+    if(isRobot){
+
+        {
+            turn == "blue" && isRobot &&   applyAnimationIfNeeded();
+    
+        }
+    }
+    else{
+        applyAnimationIfNeeded() 
+    }
+
+    // applyAnimationIfNeeded();
     return (
 
         <TouchableOpacity style={[styles.container, {

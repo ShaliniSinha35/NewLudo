@@ -4,7 +4,7 @@ import { colors } from '../../util/Colors';
 import PlayerBox from '../../components/PlayerBox/PlayerBox'
 import VerticalCellsContainer from '../../components/VerticalCellsContainer/VerticalCellsContainer';
 import HorizontalCellsContainer from '../../components/HorizontalCellsContainer/HorizontalCellsContainer';
-import { FINISHED, BLUE, BOTTOM_VERTICAL, FOUR, GREEN, HOME, ONE, RED, THREE, TOP_VERTICAL, TWO, YELLOW, R1, Y1, Y9, G1, G9, B1, B9, R9, R2, R3, R4, R5, Y2, Y3, Y5, G2, G3, G4, G5, B2, B3, B4, B15, R12, R17 } from '../../util/Constants';
+import { FINISHED, BLUE, BOTTOM_VERTICAL, FOUR, GREEN, HOME, ONE, RED, THREE, TOP_VERTICAL, TWO, YELLOW, R1, Y1, Y9, G1, G9, B1, B9, R9, R2, R3, R4, R5, Y2, Y3, Y5, G2, G3, G4, G5, B2, B3, B4, B15, R12, R17, Y16 } from '../../util/Constants';
 import RedGoti from '../../components/Goti/RedGoti';
 import YellowGoti from '../../components/Goti/YellowGoti';
 import BlueGoti from '../../components/Goti/BlueGoti';
@@ -713,7 +713,7 @@ export default class Game extends Component {
                 </View>
 
 
-                {/* {console.log("627", this.state.setIsTimerActive, this.state.currentPlayer)} */}
+                {/* {console.log("627", this.state.setTurn)} */}
 
                 {
 
@@ -904,7 +904,7 @@ export default class Game extends Component {
     
                 const { moves,  turn, extraChance, redScore, yellowScore, greenScore, blueScore } = this.state;
                 moves.push(this.state.diceNumber);
-                console.log("902",moves)
+                // console.log("902",moves)
    
    
    
@@ -1213,23 +1213,103 @@ export default class Game extends Component {
             let positionMatched = false;
             if (piece.position == one.position) {
                 one.position = one.color == "red" ? R1 : one.color == "yellow" ? Y1 : one.color == "green" ? G1 : one.color == "blue" ? B1 : null;
-                // console.log("643", one.oneCount)
+               
+
+              
+                let sum =0
+                for(let i=0;i<one.oneCount.length;i++){
+                  
+                    sum = sum + one.oneCount[i]
+                
+                }
+             
+         
+
+                if(piece.name == "one"){
+                    piece.oneCount.push(sum)
+                }
+               else if(piece.name == "two"){
+                    piece.twoCount.push(sum)
+                }
+               else if(piece.name == "three"){
+                    piece.threeCount.push(sum)
+                }
+              else if(piece.name == "four"){
+                    piece.fourCount.push(sum)
+                }
                 one.oneCount.splice(0, one.oneCount.length)
                 positionMatched = true;
 
             }
             if (piece.position == two.position) {
                 two.position = two.color == "red" ? R1 : two.color == "yellow" ? Y1 : two.color == "green" ? G1 : two.color == "blue" ? B1 : null;
+                let sum =0
+                for(let i=0;i<two.twoCount.length;i++){
+                  
+                    sum = sum + two.twoCount[i]
+                  
+                }
+           
+                if(piece.name == "one"){
+                    piece.oneCount.push(sum)
+                }
+               else if(piece.name == "two"){
+                    piece.twoCount.push(sum)
+                }
+               else if(piece.name == "three"){
+                    piece.threeCount.push(sum)
+                }
+              else if(piece.name == "four"){
+                    piece.fourCount.push(sum)
+                }
                 two.twoCount.splice(0, two.twoCount.length)
                 positionMatched = true;
             }
             if (piece.position == three.position) {
                 three.position = three.color == "red" ? R1 : three.color == "yellow" ? Y1 : three.color == "green" ? G1 : three.color == "blue" ? B1 : null;
+                let sum =0
+                for(let i=0;i<three.threeCount.length;i++){
+                 
+                    sum = sum + three.threeCount[i]
+              
+                }
+           
+                if(piece.name == "one"){
+                    piece.oneCount.push(sum)
+                }
+               else if(piece.name == "two"){
+                    piece.twoCount.push(sum)
+                }
+               else if(piece.name == "three"){
+                    piece.threeCount.push(sum)
+                }
+              else if(piece.name == "four"){
+                    piece.fourCount.push(sum)
+                }
                 three.threeCount.splice(0, three.threeCount.length)
                 positionMatched = true;
             }
             if (piece.position == four.position) {
                 four.position = four.color == "red" ? R1 : four.color == "yellow" ? Y1 : four.color == "green" ? G1 : four.color == "blue" ? B1 : null;
+                let sum =0
+                for(let i=0;i<four.fourCount.length;i++){
+                 
+                    sum = sum + four.fourCount[i]
+                
+                }
+           
+                if(piece.name == "one"){
+                    piece.oneCount.push(sum)
+                }
+               else if(piece.name == "two"){
+                    piece.twoCount.push(sum)
+                }
+               else if(piece.name == "three"){
+                    piece.threeCount.push(sum)
+                }
+              else if(piece.name == "four"){
+                    piece.fourCount.push(sum)
+                }
                 four.fourCount.splice(0, four.fourCount.length)
                 positionMatched = true;
             }

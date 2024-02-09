@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Table, TableWrapper, Row, Rows, Col } from 'react-native-table-component';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
+import socket from '../../../utils/Socket';
 
 const WinnerRobot = (props) => {
    
@@ -13,13 +14,38 @@ const [bluePlayer,setBlue]= useState(props.blue.name)
 const [yellowPlayer,setYellow]= useState(props.yellow.name)
 const [redPlayer,setRed]= useState(props.red.name)
 const [greenPlayer,setGreen]= useState(props.green.name)
-// console.log(props)
+const [result,setResult]= useState(null)
+const [playerNumber,setPlayerNumber]=useState(props.number)
+const [playerDetail,setPlayerDetail] = useState([])
+
+
+console.log("winner",bluePlayer,playerNumber)
+
 
 const getPlayerDetails = async()=>{
+
     try{
         const res = await AsyncStorage.getItem('playerArray' || '0')
         console.log(res)
         setPlayerArr(JSON.parse(res))
+
+          const data = JSON.parse(res)
+          let player = data.filter((player)=> player.name == playerNumber)
+          console.log("34",player)
+
+
+
+ 
+        socket.on('endGame', async (value) => {
+          
+          console.log(value,value)
+          if (value.value) {
+             console.log("26",value)
+             setResult(value)
+          }
+      })
+
+   
     }
     catch(err){
         console.log(err)
@@ -47,12 +73,12 @@ const getPlayerDetails = async()=>{
 
   return (
 
-    
-  playerArr != null ?
+    <>
+    { playerArr != null ?
   <ImageBackground source={require("../../../assets/bg.png") }style={{flex:1, alignItems:"center",height:Dimensions.get('screen').height, width:Dimensions.get('screen').width }}>
     <View style={{flex:1, alignItems:"center", marginTop:50}} >
    
-   <Text allowFontScaling={false} style={{fontSize:25,margin:20,color:"white"}}>GAME OVER</Text>
+   <Text allowFontScaling={false} style={{fontSize:25,margin:20,color:"white"}}>Match Results</Text>
 
      <View style={{width:350,marginBottom:20, height:300, marginTop:10}}>
        <View style={{flex:1, borderColor:"#f8f9fa",borderWidth:0.2,flexDirection:"row"}}>
@@ -78,7 +104,7 @@ const getPlayerDetails = async()=>{
          <Image source={require("../../../assets/trophy.png")} style={{height:40,width:40}}></Image>
            <Text allowFontScaling={false} style={{color:"white"}}>Winner</Text>
             </>   : 
-            <Text allowFontScaling={false} style={{color:"white"}}>{id==1 ? "Second": id == 2? "Third" : "Fourth"}</Text> 
+            <Text allowFontScaling={false} style={{color:"white"}}>{ id == 1 ? "Second": id == 2? "Third" : "Fourth"}</Text> 
 
 
         }   
@@ -108,10 +134,7 @@ const getPlayerDetails = async()=>{
 
 </ImageBackground> */}
  </View>
-  </ImageBackground>
-
-:
-<ImageBackground source={require("../../../assets/bg.png") }style={{backgroundColor:"#03045e",flex:1,height:Dimensions.get('screen').height, width:Dimensions.get('screen').width, alignItems:"center", paddingTop:100}}>
+  </ImageBackground>: !props.isplayWithRobot && <ImageBackground source={require("../../../assets/bg.png") }style={{backgroundColor:"#03045e",flex:1,height:Dimensions.get('screen').height, width:Dimensions.get('screen').width, alignItems:"center", paddingTop:100}}>
 
 <View style={{flex:1, alignItems:"center"}}>
 <MaterialCommunityIcons name="heart-broken" size={45} color="white" style={{margin:20}} />
@@ -124,6 +147,44 @@ const getPlayerDetails = async()=>{
    </TouchableOpacity>
 </View>
 </ImageBackground>
+
+}
+
+
+
+{result!= null && result.lost == props.currentPlayer &&
+<ImageBackground source={require("../../../assets/bg.png") }style={{backgroundColor:"#03045e",flex:1,height:Dimensions.get('screen').height, width:Dimensions.get('screen').width, alignItems:"center", paddingTop:100}}>
+
+<View style={{flex:1, alignItems:"center"}}>
+<MaterialCommunityIcons name="heart-broken" size={45} color="white" style={{margin:20}} />
+  <Text allowFontScaling={false} style={{color:"white", fontSize:20,margin:20}}>Game Over</Text>
+  <Text allowFontScaling={false} style={{color:"gray", fontSize:15}}>You lost because you missed 3 turns.</Text>
+
+  <TouchableOpacity style={{width:"auto", position:"absolute", flexDirection:"row", bottom:20}} onPress={()=>handlePlay()} title='Play Again'>
+   <MaterialIcons name="home" size={24} color="white"/>
+     <Text allowFontScaling={false} style={{color:"white",fontSize:18}}> Home</Text>
+   </TouchableOpacity>
+</View>
+</ImageBackground>}
+
+
+{result!= null && result.winner == props.currentPlayer && 
+   <ImageBackground source={require("../../../assets/bg.png") }style={{backgroundColor:"#03045e",flex:1,height:Dimensions.get('screen').height, width:Dimensions.get('screen').width, alignItems:"center", paddingTop:100}}>
+
+  <View style={{flex:1, alignItems:"center"}}>
+  <MaterialCommunityIcons name="emoticon-happy-outline" size={45} color="white" style={{margin:20}} />
+    <Text allowFontScaling={false} style={{color:"white", fontSize:20,margin:20}}>You Won</Text>
+    {/* <Text allowFontScaling={false} style={{color:"gray", fontSize:15}}>You lost because you missed 3 turns.</Text> */}
+  
+    <TouchableOpacity style={{width:"auto", position:"absolute", flexDirection:"row", bottom:20}} onPress={()=>handlePlay()} title='Play Again'>
+     <MaterialIcons name="home" size={24} color="white"/>
+       <Text allowFontScaling={false} style={{color:"white",fontSize:18}}> Home</Text>
+     </TouchableOpacity>
+  </View>
+  </ImageBackground>}
+    
+    </>
+
   )
 }
 

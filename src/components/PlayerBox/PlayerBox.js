@@ -18,13 +18,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Animated, Easing } from 'react-native';
 import socket from '../../../utils/Socket';
+import { FINISHED } from '../../util/Constants';
 export default PlayerBox = ({ color, customStyle, lifeline, one, two, three, four, onPieceSelection, animateForSelection, playerName, playerScore, timer, diceNumber, isRolling, showTurn, showDice }) => {
 
-  
 
-   
 
-    const [setTurn,setSetTurn]= useState(false)
+
+
+    const [setTurn, setSetTurn] = useState(false)
     const [isAnimating, setIsAnimating] = React.useState(false);
     const [backgroundColor, setBackgroundColor] = React.useState(color);
     const [intervalId, setIntervalId] = React.useState(undefined);
@@ -36,55 +37,55 @@ export default PlayerBox = ({ color, customStyle, lifeline, one, two, three, fou
     const [isBlinking, setBlinking] = useState(true)
     const [showTimer, setShowTimer] = useState(true);
     const rollingValue = new Animated.Value(0);
-    const [playerColor,setPlayerColor] = useState(null)
+    const [playerColor, setPlayerColor] = useState(null)
 
-    socket.on('getTurn',(value)=>{
-      
+    socket.on('getTurn', (value) => {
+
         setSetTurn(value)
     })
 
-    socket.on('color',(color)=>{
-      
-         setPlayerColor(color)
+    socket.on('color', (color) => {
+
+        setPlayerColor(color)
     })
 
-    useEffect(()=>{
-        socket.on('getTurn',(value)=>{
-       
+    useEffect(() => {
+        socket.on('getTurn', (value) => {
+
             setSetTurn(value)
         })
-        socket.on('color',(color)=>{
-         
+        socket.on('color', (color) => {
+
             setPlayerColor(color)
-       })
-    },[isRolling])
+        })
+    }, [isRolling])
 
 
     useEffect(() => {
         if (isRolling) {
-          startRotationAnimation();
+            startRotationAnimation();
         } else {
-          rollingValue.stopAnimation();
+            rollingValue.stopAnimation();
         }
-    
-        
+
+
         return () => {
-          rollingValue.stopAnimation();
+            rollingValue.stopAnimation();
         };
-      }, [isRolling, rollingValue]);
+    }, [isRolling, rollingValue]);
 
 
-      const startRotationAnimation = () => {
+    const startRotationAnimation = () => {
         Animated.loop(
-          Animated.timing(rollingValue, {
-            toValue: 1,
-            duration: 300, // Adjust the duration as needed
-            useNativeDriver: true,
-          })
+            Animated.timing(rollingValue, {
+                toValue: 1,
+                duration: 300, // Adjust the duration as needed
+                useNativeDriver: true,
+            })
         ).start();
-      };
+    };
 
-       useEffect(() => {
+    useEffect(() => {
         let sum = 0
         let onePoint = 0
         let twoPoint = 0
@@ -118,8 +119,11 @@ export default PlayerBox = ({ color, customStyle, lifeline, one, two, three, fou
         setFourScore(fourPoint)
         storeData(sum)
 
+        if(one.position == FINISHED || two.position == FINISHED || three.position == FINISHED || four.position == FINISHED){
+            setScore(sum * 2)
+       }
 
-        })
+    })
 
 
     const storeData = async (total) => {
@@ -168,7 +172,7 @@ export default PlayerBox = ({ color, customStyle, lifeline, one, two, three, fou
         // console.log(diceNumber)
 
         if (isRolling) {
-            return <Image style={{width:25,height:25}} rollTime={300} source={require("../../../assets/DICE2.png")}></Image>
+            return <Image style={{ width: 25, height: 25 }} rollTime={300} source={require("../../../assets/DICE2.png")}></Image>
 
         }
         if (diceNumber === 1) {
@@ -251,10 +255,10 @@ export default PlayerBox = ({ color, customStyle, lifeline, one, two, three, fou
 
     return (
 
-       
+
         <View style={[{ backgroundColor: color, flex: 4, borderRadius: 20 }]}>
 
-{/* {console.log(playerColor)} */}
+            {/* {console.log(playerColor)} */}
 
             <LinearGradient colors={color == "#ec1d27" ? ['#ec1d27', '#c1121f', '#9d0208'] : color == "#ffe01b" ? ['#ffe01b', '#ffd500', '#ffbd00'] : color == "#01A147" ? ['#01A147', '#27a300', '#005e0c'] : color == "#29b6f6" ? ['#29b6f6', '#00a6fb', '#0582ca'] : ['#4c669f', '#3b5998', '#192f6a']} style={[styles.innerContainer, {}]}>
 
@@ -268,8 +272,8 @@ export default PlayerBox = ({ color, customStyle, lifeline, one, two, three, fou
                         <View style={{ alignItems: "flex-end", padding: 10, flex: 1 }}>
 
                             {
-                               !setTurn && showDice 
-                                 ?
+                                !setTurn && showDice
+                                    ?
 
                                     <>
 
@@ -286,29 +290,29 @@ export default PlayerBox = ({ color, customStyle, lifeline, one, two, three, fou
 
                                         >
                                             {({ remainingTime }) =>
-               <Animated.View
-               style={[
-                   {
-                     transform: [
-                       {
-                         rotate: rollingValue.interpolate({
-                           inputRange: [0, 1],
-                           outputRange: ['0deg', '360deg'],
-                           
-                         }),
-                       },
-                     ],
-                   },
-                 ]}
-               >
-                                                <Text allowFontScaling={false} style={{ color: "white" }}>{renderDiceIcons()}</Text>
-                                                
+                                                <Animated.View
+                                                    style={[
+                                                        {
+                                                            transform: [
+                                                                {
+                                                                    rotate: rollingValue.interpolate({
+                                                                        inputRange: [0, 1],
+                                                                        outputRange: ['0deg', '360deg'],
+
+                                                                    }),
+                                                                },
+                                                            ],
+                                                        },
+                                                    ]}
+                                                >
+                                                    <Text allowFontScaling={false} style={{ color: "white" }}>{renderDiceIcons()}</Text>
+
                                                 </Animated.View>}
 
                                         </CountdownCircleTimer>
                                     </>
 
-                                    :  
+                                    :
 
                                     <View style={{ opacity: 0.5 }}>
                                         <CountdownCircleTimer
@@ -327,9 +331,9 @@ export default PlayerBox = ({ color, customStyle, lifeline, one, two, three, fou
                                         >
                                             {({ remainingTime }) =>
 
-                                 
-                                                    <Text style={{ color: "white" }}>{defaultDiceIcons()}</Text>
-                                                }
+
+                                                <Text style={{ color: "white" }}>{defaultDiceIcons()}</Text>
+                                            }
                                         </CountdownCircleTimer>
                                     </View>
 
@@ -340,31 +344,59 @@ export default PlayerBox = ({ color, customStyle, lifeline, one, two, three, fou
 
                         </View>
 
-                        <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
+                        {
+                            color == '#ec1d27' || '#29b6f6' ?
 
 
-                            {
-                                setTurn && showDice ?
-                                    <>
-                                        <Image style={{ position: "absolute", opacity: 0.2, height: 90, width: 110, top: -40, left: -10 }} source={require("../../../assets/gif1.gif")} ></Image>
+                                <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
 
 
-                                        <Image source={require("../../../assets/player2.png")} style={{ height: 80, width: 90, resizeMode: "contain" }}></Image>
-                                    </>
+                                    {
+                                        setTurn && showDice ?
+                                            <>
+                                                <Image style={{ position: "absolute", opacity: 0.2, height: 90, width: 110, top: -40, left: -10 }} source={require("../../../assets/gif1.gif")} ></Image>
 
-                                    :
-                                    
-                                    <Image source={require("../../../assets/player2.png")} style={{ height: 80, width: 95, resizeMode: "contain" }}></Image>
+                                                <Image source={require("../../../assets/player2.png")} style={{ height: 80, width: 90, resizeMode: "contain" }}></Image>
+                                            </>
 
-                            }
+                                            : <Image source={require("../../../assets/player2.png")} style={{ height: 80, width: 95, resizeMode: "contain" }}></Image>
 
-                            <View style={{}}>
-                          
-                                <Text allowFontScaling={false} style={{ fontSize: 18, color: "white", textAlign: "center" }}>Score</Text>
-                                <Text allowFontScaling={false} style={{ fontSize: 30, color: "white", textAlign: "center", fontWeight: 500 }}>{totalScore}</Text>
-                            </View>
+                                    }
 
-                        </View>
+                                    <View style={{}}>
+
+                                        <Text allowFontScaling={false} style={{ fontSize: 18, color: "white", textAlign: "center" }}>Score</Text>
+                                        <Text allowFontScaling={false} style={{ fontSize: 30, color: "white", textAlign: "center", fontWeight: 500 }}>{totalScore}</Text>
+                                    </View>
+
+                                </View>
+                                :
+                                <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
+
+
+                                    {
+                                        setTurn && showDice ?
+                                            <>
+                                                <Image style={{ position: "absolute", opacity: 0.2, height: 90, width: 110, top: -40, left: -10 }} source={require("../../../assets/gif1.gif")} ></Image>
+
+                                                <Image source={require("../../../assets/player4.png")} style={{ height: 80, width: 90, resizeMode: "contain" }}></Image>
+                                            </>
+
+                                            : <Image source={require("../../../assets/player4.png")} style={{ height: 80, width: 95, resizeMode: "contain" }}></Image>
+
+                                    }
+
+                                    <View style={{}}>
+
+                                        <Text allowFontScaling={false} style={{ fontSize: 18, color: "white", textAlign: "center" }}>Score</Text>
+                                        <Text allowFontScaling={false} style={{ fontSize: 30, color: "white", textAlign: "center", fontWeight: 500 }}>{totalScore}</Text>
+                                    </View>
+
+                                </View>
+                        }
+
+
+
 
 
                         <View style={{ backgroundColor: color == '#ec1d27' ? "#780000" : color == '#29b6f6' ? '#0582ca' : color == '#01A147' ? '#004b23' : color == '#ffe01b' ? '#faa307' : null, flexDirection: "row", borderTopLeftRadius: 5, borderTopRightRadius: 5, justifyContent: "space-between", alignItems: "center" }}>

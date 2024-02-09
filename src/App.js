@@ -109,6 +109,7 @@ clearAsyncStorageMultiple(keysToRemove).then(success => {
         isGameEnd={state.isGameEnd}
         onEnd={handleEndGame}
         number ={route.params.mobile}
+        
       />
 
     );
@@ -144,6 +145,8 @@ clearAsyncStorageMultiple(keysToRemove).then(success => {
         onGreenInput={name => handlePlayerInput('green', name)}
         onBlueInput={name => handlePlayerInput('blue', name)}
         currentPlayer={state.currentPlayer}
+        isPlayWithRobot={state.isPlayWithRobot}
+        number ={route.params.mobile}
       />
     );
   }

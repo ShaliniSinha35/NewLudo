@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet,Animated, TouchableOpacity,Dimensions, Image, ImageBackground, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Animated, TouchableOpacity, Dimensions, Image, ImageBackground, ActivityIndicator } from 'react-native';
 import NewGameModel from '../../components/NewGameModel/NewGameModel'
 import TwoPlayerModal from '../../components/NewGameModel/TwoPlayerModal';
 import ThreePlayerModal from '../../components/NewGameModel/ThreePlayerModal';
@@ -8,8 +8,8 @@ import { EvilIcons } from '@expo/vector-icons';
 import axios from 'axios'
 import Socket from '../../../utils/Socket';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
+import { FontAwesome } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 export default Home = ({
   isStartGameModalVisible,
   onNewGameButtonPress,
@@ -24,7 +24,7 @@ export default Home = ({
   blue,
   onStart,
   twoPlayer, threePlayer, fourPlayer, mobileNumber,
-  setCurrentNextPlayer,setRobotGame
+  setCurrentNextPlayer, setRobotGame
 
 }) => {
 
@@ -38,74 +38,71 @@ export default Home = ({
   const [nextPlayer, setNextPlayer] = useState(null)
   const keysToRemove = ['red', 'green', 'blue', 'yellow']
   const [flag, setFlag] = useState('')
-  const [randomNumber,setNumber] = useState("8680327678")
-  const [findPlayer,setFindPlayer]= useState(false)
+  const [randomNumber, setNumber] = useState("8680327678")
+  const [findPlayer, setFindPlayer] = useState(false)
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-const [playerTwo,setPlayerTwo]= useState(null)
+  const [playerTwo, setPlayerTwo] = useState(null)
 
-var cp = ''
-var np = ''
-
-
-const generateNumber = ()=>{
-  var RoboNumber = Math.floor(Math.random() * 9000000000) + 1000000000;
-            RoboNumber = parseInt('9' + RoboNumber.toString().substring(1));
-            return RoboNumber
-}
+  var cp = ''
+  var np = ''
 
 
+  const generateNumber = () => {
+    var RoboNumber = Math.floor(Math.random() * 9000000000) + 1000000000;
+    RoboNumber = parseInt('9' + RoboNumber.toString().substring(1));
+    return RoboNumber
+  }
 
 
-const playerList = [
-
-  {
-    id:1,
-    image:require("../../../assets/player2.png"),
-    number:generateNumber()
-  },
-  {
-    id:2,
-    image:require("../../../assets/player3.png"),
-    number:generateNumber()
-  },
-  {
-    id:3,
-    image:require("../../../assets/player4.png"),
-    number:generateNumber()
-  },
-  {
-    id:4,
-    image:require("../../../assets/player3.png"),
-    number:generateNumber()
-  },
-
-  {
-    id:5,
-    image:require("../../../assets/player4.png"),
-    number:generateNumber()
-  },
-  {
-    id:6,
-    image:require("../../../assets/player3.png"),
-    number:generateNumber()
-  },
-  {
-    id:7,
-    image:require("../../../assets/player2.png"),
-    number:generateNumber()
-  },
-  {
-    id:8,
-    image:require("../../../assets/player3.png"),
-    number:generateNumber()
-  },
-
-]
 
 
- 
+  const playerList = [
 
- 
+    {
+      id: 1,
+      image: require("../../../assets/player2.png"),
+      number: generateNumber()
+    },
+    {
+      id: 2,
+      image: require("../../../assets/player3.png"),
+      number: generateNumber()
+    },
+    {
+      id: 3,
+      image: require("../../../assets/player4.png"),
+      number: generateNumber()
+    },
+    {
+      id: 4,
+      image: require("../../../assets/player3.png"),
+      number: generateNumber()
+    },
+
+    {
+      id: 5,
+      image: require("../../../assets/player4.png"),
+      number: generateNumber()
+    },
+    {
+      id: 6,
+      image: require("../../../assets/player3.png"),
+      number: generateNumber()
+    },
+    {
+      id: 7,
+      image: require("../../../assets/player2.png"),
+      number: generateNumber()
+    },
+    {
+      id: 8,
+      image: require("../../../assets/player3.png"),
+      number: generateNumber()
+    },
+
+  ]
+
+
 
   useEffect(() => {
     // console.log(Socket)
@@ -116,9 +113,6 @@ const playerList = [
 
       // console.log("58",roomId)
     });
-  
-
-
 
     Socket.on('roomStatus', (room) => {
       setRoomStatus(room);
@@ -128,14 +122,14 @@ const playerList = [
     });
 
     Socket.on('startTwoPlayerGame', (room) => {
-      console.log("home", room)
+      // console.log("home", room)
 
 
-      if(room.sockets[0] == "ROBOT" || room.sockets[1] == "ROBOT"){
-       
-         setRobotGame(false)
+      if (room.sockets[0] == "ROBOT" || room.sockets[1] == "ROBOT") {
+
+        setRobotGame(false)
       }
-      else{
+      else {
         setRobotGame(true)
       }
       setFlag('')
@@ -143,14 +137,13 @@ const playerList = [
 
       onBlueInput(room.users[0])
       onYellowInput(room.users[1])
-   
+
       if (room.users[0] == mobileNumber) {
         cp = room.sockets[0]
         np = room.sockets[1]
         setCurrentPlayer(room.sockets[0])
         setNextPlayer(room.sockets[1])
         setPlayerTwo(room.users[1])
-
         setCurrentNextPlayer(cp, np)
       }
       else {
@@ -162,27 +155,24 @@ const playerList = [
         setCurrentNextPlayer(cp, np)
       }
 
-      onStart()
-
-      // setTimeout(() => {
-       
-      // }, 15000);
- 
-
-   
 
 
+      if (room.sockets[0] == "ROBOT" || room.sockets[1] == "ROBOT") {
 
+        setTimeout(() => {
+          onStart()
+        }, 6000);
+
+
+      }
+
+      else {
+        onStart()
+      }
 
 
       // console.log("80", room)
 
-
-
-
- 
-
-      
 
     });
 
@@ -194,7 +184,7 @@ const playerList = [
       // Socket.emit('disconnectUser', { user: mobileNumber })
 
     };
-  }, []);
+  }, [], [playerTwo]);
 
 
   const handleTwo = () => {
@@ -249,24 +239,24 @@ const playerList = [
       useNativeDriver: false,
     })
   );
-  
+
   useEffect(() => {
     const resetAnimation = Animated.timing(translateX, {
       toValue: width, // Reset to initial value
       duration: 0,
       useNativeDriver: false,
     });
-  
+
     const loopAnimation = Animated.sequence([animatedLoop, resetAnimation]);
-  
+
     loopAnimation.start();
-  
+
     // Update the image index on each animation iteration
     const eventListener = Animated.event(
       [{ nativeEvent: { translateX: translateX } }],
       { useNativeDriver: false }
     );
-  
+
     translateX.addListener((value) => {
       if (value.value === 0) {
         // Reset the image index when the animation completes a loop
@@ -274,134 +264,146 @@ const playerList = [
         loopAnimation.reset(); // Start a new loop
       }
     });
-  
+
     return () => {
       // Clean up animations when the component unmounts
       translateX.removeAllListeners();
       loopAnimation.stop();
     };
   }, [translateX]);
-  
+
   useEffect(() => {
-    console.log("Player Two:", playerTwo);
+    // console.log("Player Two:", playerTwo);
   }, [playerTwo]);
   return (
     <ImageBackground source={require("../../../assets/bg.png")} style={styles.container}>
 
+      <>
+        <View style={{ position: "absolute", top: 10, right: 20, justifyContent: "center", alignItems: "center" }}>
+          <EvilIcons name="user" size={30} color="white" />
 
-      <View style={{ position: "absolute", top: 10, right: 20, justifyContent: "center", alignItems: "center" }}>
-        <EvilIcons name="user" size={30} color="white" />
+          <Text style={{ color: "white", textAlign: "center", marginTop: 5, fontSize: 15 }}>{number}</Text>
 
-        <Text style={{ color: "white", textAlign: "center", marginTop: 5, fontSize: 15 }}>{number}</Text>
-
-      </View>
-
-      {
-         !findPlayer?
-        flag != '' ?
-         <>
-
-        <View>
-          {/* <Image source={require("../../../assets/searchingGif.gif")} style={{height:120,width:120,resizeMode:"contain"}}></Image> */}
         </View>
 
-        <View
-        style={[
-          styles.box,
-          
-        
-        ]}
-      >
-        <>
-        <Image source={require("../../../assets/player2.png")} style={{width:85,height:88,resizeMode:"contain"}}></Image>
-        <Text style={{position:"absolute",bottom:-26,color:"white"}} >{number}</Text>
-        </>
-        
-        </View>  
 
-         <Animated.View
-        style={[
-          styles.box1,
-          {
-            transform: [{ translateX: translateX }],
-          },
-        ]}
-      >
-        <>
-        <Image source={playerList[currentImageIndex].image} style={{width:55,height:65,resizeMode:"contain"}}></Image>
-        <Text style={{position:"absolute",bottom:-26,color:"white"}} >{playerList[currentImageIndex].number}</Text>
-        </>
-        
-        </Animated.View>  
-          {/* <Text style={{ color: "white", fontSize: 18 }}>{flag}</Text>
-          <ActivityIndicator></ActivityIndicator> */}
-        </>
-
-           :   
-
-             <>
-
-          <Image source={require("../../../assets/applogo.png")} style={{ height: 180, width: 170, resizeMode: "contain" }}></Image>
+      </>
 
 
-<TouchableOpacity style={styles.newGameButton} onPress={handleTwo}>
-  <Text style={{ fontSize: 18, color: "white" }}>2 Players</Text>
-</TouchableOpacity>
-             </>
-
-:  
-
-<>
-                   <Text style={{color:"white"}}>Game Start Soon...</Text>
-      
-      
-
-
-        {
-        playerTwo!=null && 
-
-        <>
-        <View
-        style={[
-          styles.box,
-          
-        
-        ]}
-      >
-        <>
-        <Image source={require("../../../assets/player2.png")} style={{width:85,height:88,resizeMode:"contain"}}></Image>
-        <Text style={{position:"absolute",bottom:-26,color:"white"}} >{number}</Text>
-        </>
-        
-        </View>  
-
-
-        <View
-        style={[
-          styles.box,
-          
-        
-        ]}
-      >
-        
-        <>
-        <Image source={require("../../../assets/player2.png")} style={{width:85,height:88,resizeMode:"contain"}}></Image>
-        <Text style={{position:"absolute",bottom:-26,color:"white"}} >{playerTwo}</Text>
-        </>
-        </View>  
-
-
-        </>
-        }
-      
-    </>    
+      {
+        !findPlayer ?
+          flag != '' ?
+            <>
+        <Image source={require("../../../assets/applogo.png")} style={{position: "absolute", top: 20, height: 150, width: 150, resizeMode: "contain" }}></Image>
     
+                <TouchableOpacity style={{width:150,height:60,flexDirection:"row",marginBottom:25,justifyContent:"center",backgroundColor:"#240046",borderWidth:1,borderColor:"white",borderRadius:10,alignItems:"center"}}>
+                  <View style={{margin:8}}>
+                  <MaterialCommunityIcons name="sword-cross" size={30} color="white" />
+                  </View>
+                  <View style={{margin:8}}>
+                  <Text allowFontScaling={false} style={{ color: "white", fontSize: 12 }}>Battle</Text>
+                  <Text allowFontScaling={false} style={{color: "white", fontSize: 22,fontWeight:600}}><FontAwesome name="rupee" size={12} color="white" /> 0.4</Text>
+                  </View>
+                </TouchableOpacity>
+           
+
+              <View
+                style={[
+                  styles.box,
+
+
+                ]}
+              >
+                <>
+
+                  <Image style={{ position: "absolute", opacity: 0.2, height: 150, width: 150, top: -30 }} source={require("../../../assets/gif1.gif")} ></Image>
+                  <Image source={require("../../../assets/player2.png")} style={{ width: 85, height: 88, resizeMode: "contain" }}></Image>
+                  <Text style={{ position: "absolute", bottom: -26, color: "white" }} >+91{number}</Text>
+                </>
+
+              </View>
+              <Text style={{color:"#ff8800",fontSize:18,marginBottom:10,fontWeight:500}}> VS </Text>
+
+              <Animated.View
+                style={[
+                  styles.box1,
+                  {
+                    transform: [{ translateX: translateX }],
+                  },
+                ]}
+              >
+                <>
+                  <Image source={playerList[currentImageIndex].image} style={{ width: 55, height: 65, resizeMode: "contain" }}></Image>
+                  <Text style={{ position: "absolute", bottom: -26, color: "white" }} >{playerList[currentImageIndex].number}</Text>
+                </>
+
+              </Animated.View>
+
+
+              <Text style={{ position: "absolute", bottom: 35,color: "white", marginBottom: 5 }}>Searching for opponent...</Text>
+              <Text style={{ position: "absolute", bottom: 15, color: "white", marginBottom: 5,fontSize:10,marginTop:10 }}>you'll lose the game & entry fee if you leave now or close the app.</Text>
+            </>
+
+            :
+
+            <>
+
+              <Image source={require("../../../assets/applogo.png")} style={{ height: 180, width: 170, resizeMode: "contain" }}></Image>
+
+
+              <TouchableOpacity style={styles.newGameButton} onPress={handleTwo}>
+                <Text style={{ fontSize: 18, color: "white" }}>2 Players</Text>
+              </TouchableOpacity>
+            </>
+
+          :
+
+          <>
+            <Text style={{ color: "white", marginBottom: 5 }}>Game Start Soon...</Text>
+
+            {
+              playerTwo != null &&
+
+              <>
+                <View
+                  style={[
+                    styles.box,
+
+
+                  ]}
+                >
+                  <>
+                    <Image source={require("../../../assets/player2.png")} style={{ width: 85, height: 88, resizeMode: "contain" }}></Image>
+                    <Text style={{ position: "absolute", bottom: -26, color: "white" }} >+91{number}</Text>
+                  </>
+
+                </View>
+
+               <Text style={{color:"#ff8800",fontSize:18,marginBottom:30,fontWeight:500}}> VS</Text>
+                <View
+                  style={[
+                    styles.box,
+                  ]}
+                >
+
+                  <>
+                    <Image source={require("../../../assets/player4.png")} style={{ width: 85, height: 88, resizeMode: "contain" }}></Image>
+                    <Text style={{ position: "absolute", bottom: -26, color: "white" }}>+91{playerTwo}</Text>
+                  </>
+                </View>
+
+
+              </>
+            }
+
+          </>
+
       }
-      
 
 
 
-      
+
+
 
 
       {selectedPlayers === 2 && (
@@ -492,10 +494,10 @@ const styles = StyleSheet.create({
     borderRadius: 80,
     // backgroundColor: '#240046',
     backgroundColor: '#7b2cbf',
-    alignItems:"center",
+    alignItems: "center",
     borderColor: '#ddd',
     borderWidth: 2,
-    marginBottom:70
+    marginBottom: 70
   },
   box1: {
     width: 80,
@@ -503,10 +505,10 @@ const styles = StyleSheet.create({
     borderRadius: 80,
     backgroundColor: '#240046',
     // backgroundColor: '#7b2cbf',
-    alignItems:"center",
+    alignItems: "center",
     borderColor: '#ddd',
     borderWidth: 2,
-  
+
   },
   imageStyle: {
     width: '70%',

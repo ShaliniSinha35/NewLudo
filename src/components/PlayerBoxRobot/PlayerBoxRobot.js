@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, Image, LogBox, ImageBackground } from 'react-native';
-import { HOME } from '../../util/Constants';
+import { FINISHED, HOME } from '../../util/Constants';
 import { Entypo } from '@expo/vector-icons';
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Animated, Easing } from 'react-native';
-export default PlayerBoxRobot = ({ color, customStyle, lifeline, one, two, three, four, onPieceSelection, animateForSelection, playerName, playerScore, timer, diceNumber, isRolling,showDice }) => {
+export default PlayerBoxRobot = ({ color, customStyle, lifeline, one, two, three, four, onPieceSelection, animateForSelection, playerName, playerScore, timer, diceNumber, isRolling, showDice }) => {
 
 
 
@@ -24,29 +24,29 @@ export default PlayerBoxRobot = ({ color, customStyle, lifeline, one, two, three
 
 
 
-    
+
     useEffect(() => {
         if (isRolling) {
-          startRotationAnimation();
+            startRotationAnimation();
         } else {
-          rollingValue.stopAnimation();
+            rollingValue.stopAnimation();
         }
-    
-        
-        return () => {
-          rollingValue.stopAnimation();
-        };
-      }, [isRolling, rollingValue]);
 
-      const startRotationAnimation = () => {
+
+        return () => {
+            rollingValue.stopAnimation();
+        };
+    }, [isRolling, rollingValue]);
+
+    const startRotationAnimation = () => {
         Animated.loop(
-          Animated.timing(rollingValue, {
-            toValue: 1,
-            duration: 300, // Adjust the duration as needed
-            useNativeDriver: true,
-          })
+            Animated.timing(rollingValue, {
+                toValue: 1,
+                duration: 300, // Adjust the duration as needed
+                useNativeDriver: true,
+            })
         ).start();
-      };
+    };
     useEffect(() => {
         let sum = 0
         let onePoint = 0
@@ -72,14 +72,17 @@ export default PlayerBoxRobot = ({ color, customStyle, lifeline, one, two, three
         }
 
         sum = onePoint + twoPoint + threePoint + fourPoint
-        // console.log("sum", sum)
-        // console.log(onePoint, "onepoint", twoPoint, "twoPoint", threePoint, "threePoint", fourPoint, "fourPoint")
+     
         setScore(sum)
         setOneScore(onePoint)
         setTwoScore(twoPoint)
         setThreeScore(threePoint)
         setFourScore(fourPoint)
         storeData(sum)
+
+        if(one.position == FINISHED || two.position == FINISHED || three.position == FINISHED || four.position == FINISHED){
+             setScore(sum * 2)
+        }
 
 
     })
@@ -128,7 +131,7 @@ export default PlayerBoxRobot = ({ color, customStyle, lifeline, one, two, three
 
     const renderDiceIcons = () => {
         if (isRolling) {
-            return <Image style={{width:25,height:25}} rollTime={300} source={require("../../../assets/DICE2.png")}></Image>
+            return <Image style={{ width: 25, height: 25 }} rollTime={300} source={require("../../../assets/DICE2.png")}></Image>
 
         }
 
@@ -157,7 +160,7 @@ export default PlayerBoxRobot = ({ color, customStyle, lifeline, one, two, three
 
     let shouldRenderBackgroundColor = 1;
     const applyAnimationIfNeeded = () => {
-        if (animateForSelection ) {
+        if (animateForSelection) {
             if (!isAnimating) {
                 setIsAnimating(true);
                 setIntervalId(setInterval(() => {
@@ -179,7 +182,7 @@ export default PlayerBoxRobot = ({ color, customStyle, lifeline, one, two, three
 
             return (
                 <TouchableOpacity style={{ flex: 1 }} onPress={() => { onPieceSelection(piece) }}>
-                  
+
                 </TouchableOpacity>
 
 
@@ -188,11 +191,11 @@ export default PlayerBoxRobot = ({ color, customStyle, lifeline, one, two, three
         }
         return (
             <TouchableOpacity style={{ flex: 1 }}>
-         
+
             </TouchableOpacity>
         );
     }
-  { color != "#ffe01b" && applyAnimationIfNeeded()}  
+    { color != "#ffe01b" && applyAnimationIfNeeded() }
 
     return (
 
@@ -211,7 +214,7 @@ export default PlayerBoxRobot = ({ color, customStyle, lifeline, one, two, three
 
 
                         <View style={{ alignItems: "flex-end", padding: 10, flex: 1 }}>
-                   
+
 
                             {
                                 timer && showDice ?
@@ -232,23 +235,23 @@ export default PlayerBoxRobot = ({ color, customStyle, lifeline, one, two, three
 
                                         >
                                             {({ remainingTime }) =>
-                                                 <Animated.View
-                                                 style={[
-                                                     {
-                                                       transform: [
-                                                         {
-                                                           rotate: rollingValue.interpolate({
-                                                             inputRange: [0, 1],
-                                                             outputRange: ['0deg', '360deg'],
-                                                             
-                                                           }),
-                                                         },
-                                                       ],
-                                                     },
-                                                   ]}
-                                                 >
-                                                <Text allowFontScaling={false} style={{ color: "white" }}>{renderDiceIcons()}</Text>
-                                           </Animated.View>}
+                                                <Animated.View
+                                                    style={[
+                                                        {
+                                                            transform: [
+                                                                {
+                                                                    rotate: rollingValue.interpolate({
+                                                                        inputRange: [0, 1],
+                                                                        outputRange: ['0deg', '360deg'],
+
+                                                                    }),
+                                                                },
+                                                            ],
+                                                        },
+                                                    ]}
+                                                >
+                                                    <Text allowFontScaling={false} style={{ color: "white" }}>{renderDiceIcons()}</Text>
+                                                </Animated.View>}
                                         </CountdownCircleTimer>
                                     </>
                                     :
@@ -291,12 +294,14 @@ export default PlayerBoxRobot = ({ color, customStyle, lifeline, one, two, three
                                         <Image style={{ position: "absolute", opacity: 0.2, height: 90, width: 110, top: -40, left: -10 }} source={require("../../../assets/gif1.gif")} ></Image>
 
 
-                                        <Image source={require("../../../assets/player2.png")} style={{ height: 80, width: 90, resizeMode: "contain" }}></Image>
+                                        {color == '#29b6f6' ? <Image source={require("../../../assets/player2.png")} style={{ height: 80, width: 90, resizeMode: "contain" }}></Image> : <Image source={require("../../../assets/player4.png")} style={{ height: 80, width: 90, resizeMode: "contain" }}></Image>}
                                     </>
 
-                                    : <Image source={require("../../../assets/player2.png")} style={{ height: 80, width: 95, resizeMode: "contain" }}></Image>
+                                    : color == '#29b6f6' ? <Image source={require("../../../assets/player2.png")} style={{ height: 80, width: 95, resizeMode: "contain" }}></Image> : <Image source={require("../../../assets/player4.png")} style={{ height: 80, width: 95, resizeMode: "contain" }}></Image>
 
                             }
+
+
 
                             <View style={{}}>
                                 <Text allowFontScaling={false} style={{ fontSize: 18, color: "white", textAlign: "center" }}>Score</Text>
