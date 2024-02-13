@@ -46,6 +46,7 @@ export default class Game extends Component {
         this.state = {
             currentPlayer: currentPlayer,
             nextPlayer: nextPlayer,
+            playerNumber:number,
             red: this.initPlayer(RED, red, redName),
             yellow: this.initPlayer(YELLOW, yellow, yellowName),
             green: this.initPlayer(GREEN, green, greenName),
@@ -206,6 +207,7 @@ export default class Game extends Component {
         // }
         this.unloadSound();
         this.unLoadPieceBiteSound()
+        Socket.emit('disconnectUser', { user: this.state.playerNumber  })
         // clearInterval(this.intervalId);
         // this.clearAllTimers();
         // Socket.off('getTimer');

@@ -37,6 +37,7 @@ export default class GameRobot extends Component {
         this.state = {
             currentPlayer: currentPlayer,
             nextPlayer: nextPlayer,
+            playerNumber:number,
             red: this.initPlayer(RED, red, redName),
             yellow: this.initPlayer(YELLOW, yellow, yellowName),
             green: this.initPlayer(GREEN, green, greenName),
@@ -71,7 +72,7 @@ export default class GameRobot extends Component {
             blueHeart: 3,
             greenHeart: 3,
             yellowHeart: 3,
-            remainingTime: 180, // 3 minutes in seconds
+            remainingTime: 60, // 3 minutes in seconds
             winnerArray: [],
             status: "warning",
             title: "You missed a turn!",
@@ -150,7 +151,7 @@ export default class GameRobot extends Component {
         this.clearAllTimers();
         Socket.off('getTimer');
         Socket.off('updateTimerState');
-        // Socket.emit('disconnectUser', { user:   })
+        Socket.emit('disconnectUser', { user: this.state.playerNumber  })
         // Socket.emit('disconnectUser', { user: this.state.activePlayer })
         // Socket.emit('disconnectSocket', { socket: this.state.currentPlayer })
         // Socket.emit('disconnectSocket', { socket: this.state.nextPlayer })
@@ -251,7 +252,7 @@ export default class GameRobot extends Component {
                     this.state.winnerArray.push(sortedValues[i])
 
                 }
-
+                await AsyncStorage.removeItem('playerArray')
                 await AsyncStorage.setItem('playerArray', JSON.stringify(this.state.winnerArray))
 
 
@@ -269,9 +270,9 @@ export default class GameRobot extends Component {
                 const blueValue = await AsyncStorage.getItem('blue');
 
                 const values = [
-                    { key: 'red', value: redValue },
-                    { key: 'yellow', value: yellowValue },
-                    { key: 'blue', value: blueValue },
+                    { key: 'red', value: redValue,name:redName },
+                    { key: 'yellow', value: yellowValue,name:blueName },
+                    { key: 'blue', value: blueValue,name:blueName },
                 ];
                 const sortedValues = values.sort((a, b) => b.value - a.value);
                 const firstGreatest = sortedValues[0].key;
@@ -282,9 +283,8 @@ export default class GameRobot extends Component {
 
                 for (let i = 0; i < sortedValues.length; i++) {
                     this.state.winnerArray.push(sortedValues[i])
-
                 }
-
+                await AsyncStorage.removeItem('playerArray')
                 await AsyncStorage.setItem('playerArray', JSON.stringify(this.state.winnerArray))
 
 
@@ -293,14 +293,14 @@ export default class GameRobot extends Component {
                 console.log(error)
             }
         }
-        else {
+        else {              
 
             try {
                 const yellowValue = await AsyncStorage.getItem('yellow');
                 const blueValue = await AsyncStorage.getItem('blue');
                 const values = [
-                    { key: 'yellow', value: yellowValue },
-                    { key: 'blue', value: blueValue },
+                    { key: 'yellow', value: yellowValue,name:yellowName },
+                    { key: 'blue', value: blueValue,name:blueName },
                 ];
                 const sortedValues = values.sort((a, b) => b.value - a.value);
                 const firstGreatest = sortedValues[0].key;
@@ -313,6 +313,7 @@ export default class GameRobot extends Component {
 
                 }
 
+                await AsyncStorage.removeItem('playerArray')
                 await AsyncStorage.setItem('playerArray', JSON.stringify(this.state.winnerArray))
             }
             catch (error) {
@@ -482,6 +483,7 @@ export default class GameRobot extends Component {
         else {
             // Handle the game end or next round logic here
         }
+
     }
 
     handleTimerUpdate(timerData) {
@@ -1724,7 +1726,7 @@ export default class GameRobot extends Component {
             // }
 
 
-            if (move == 6 && this.state.extraChance >= 1) {
+            if (move == 6 ) {
 
                 this.displayTimer();
             }
@@ -1741,6 +1743,7 @@ export default class GameRobot extends Component {
                 piece.threeCount.push(move)
 
             }
+
             if (piece.name == "four") {
                 piece.fourCount.push(move)
             }
