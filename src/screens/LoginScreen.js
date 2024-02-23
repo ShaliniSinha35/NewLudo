@@ -1,4 +1,4 @@
-import { View, Text, ImageBackground,Animated, Dimensions, ScrollView, SafeAreaView, StyleSheet, KeyboardAvoidingView, TextInput, TouchableOpacity, Alert } from 'react-native'
+import { View, Text, ImageBackground,Animated,Image, Dimensions, ScrollView, SafeAreaView, StyleSheet, KeyboardAvoidingView, TextInput, TouchableOpacity, Alert } from 'react-native'
 import React, { useState, useEffect } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
@@ -100,11 +100,12 @@ const LoginScreen = () => {
 
                     <KeyboardAvoidingView>
                         <View style={{ alignItems: "center" }}>
-                            <Text style={styles.heading}>Login</Text>
+                        <Image source={require("../../assets/applogo.png")} style={{ position: "absolute", top: 10, height: 80, width: 100, resizeMode: "contain" }}></Image>
+
                         </View>
 
 
-                        <View style={{ marginTop: 30 }}>
+                        <View style={{ marginTop: 80 }}>
                             <View style={styles.inputBoxCont}>
                                 <Ionicons
                                     name="ios-person"
@@ -227,10 +228,11 @@ const styles = StyleSheet.create({
       },
     button: {
         width: 200,
-        backgroundColor: "#231942",
+        backgroundColor: "#f6ae2d",
         borderRadius: 6,
         marginLeft: "auto",
         marginRight: "auto",
         padding: 15,
+        borderColor:"white"
     },
 });

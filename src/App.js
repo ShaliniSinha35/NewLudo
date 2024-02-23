@@ -30,7 +30,8 @@ const App = () => {
     fourPlayer: false,
     currentPlayer: null,
     nextPlayer:null,
-    isPlayWithRobot:false
+    isPlayWithRobot:false,
+    roomId:null
   });
 
 
@@ -109,6 +110,7 @@ clearAsyncStorageMultiple(keysToRemove).then(success => {
         isGameEnd={state.isGameEnd}
         onEnd={handleEndGame}
         number ={route.params.mobile}
+        roomId = {state.roomId}
         
       />
 
@@ -168,7 +170,8 @@ clearAsyncStorageMultiple(keysToRemove).then(success => {
         onBlueInput={name => handlePlayerInput('blue', name)}
         mobileNumber = {route.params.mobile}
         setCurrentNextPlayer = {(cp,np)=>setState(prevState => ({ ...prevState, currentPlayer:cp, nextPlayer:np }))}
-        setRobotGame = {(value) => setState(prevState => ({ ...prevState, isPlayWithRobot: value }))}                                      
+        setRobotGame = {(value) => setState(prevState => ({ ...prevState, isPlayWithRobot: value }))}    
+        storeRoomId = {(id) => setState(prevState => ({ ...prevState, roomId: id }))}                                     
       />
     );
   }

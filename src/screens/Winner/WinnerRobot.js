@@ -6,6 +6,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import socket from '../../../utils/Socket';
 import { FontAwesome } from '@expo/vector-icons';
+import axios from 'axios';
 const WinnerRobot = (props) => {
 
   const [playerArr, setPlayerArr] = useState(null)
@@ -30,7 +31,10 @@ const WinnerRobot = (props) => {
     try {
       const res = await AsyncStorage.getItem('playerArray' || '0')
       console.log(res)
+
       setPlayerArr(JSON.parse(res))
+
+
 
       const data = JSON.parse(res)
       let pid = data.findIndex((player) => player.name === playerNumber);
@@ -47,10 +51,14 @@ const WinnerRobot = (props) => {
       }
       )
 
+      let isUpdate = data[0].name == playerNumber ? true :false
+      console.log("54",isUpdate)
+
       console.log("34", player, pid)
 
       setPlayerDetail(player)
       setPlayerRank(pid)
+      updateWallet(isUpdate)
 
 
 
@@ -66,6 +74,7 @@ const WinnerRobot = (props) => {
 
 
     }
+
     catch (err) {
       console.log(err)
     }
@@ -74,10 +83,40 @@ const WinnerRobot = (props) => {
 
   useEffect(() => {
     getPlayerDetails()
+   
   }, [])
 
 
 
+
+
+  const updateWallet = async (isUpdate) => {
+
+
+   if(isUpdate){
+   
+
+    const wallet = 2;
+  
+    try {
+      const response = await axios.post(
+        'https://ludo-b2qo.onrender.com/updateWallet',
+        { userId: playerNumber, wallet }
+
+      );
+  
+      // Handle the response as needed
+      console.log(response.data);
+    } 
+    catch (error) {
+      // Handle errors
+      console.error('Error updating wallet:', error.message);
+    }
+   }
+
+   
+  };
+  
 
   const handlePlay = async () => {
     props.backToHome()
@@ -88,7 +127,7 @@ const WinnerRobot = (props) => {
 
     await AsyncStorage.removeItem('playerArray');
 
-  }
+   }
 
   return (
 
@@ -96,15 +135,16 @@ const WinnerRobot = (props) => {
       {playerArr != null ?
         <ImageBackground source={require("../../../assets/bg.png")} style={{ flex: 1, alignItems: "center", height: Dimensions.get('screen').height, width: Dimensions.get('screen').width }}>
           
-          <Text allowFontScaling={false} style={{ fontSize: 18, marginTop: 20, color: "white" }}>Match Results</Text>
-          {playerDetail != null && <View style={{ width: 330, height: 85, backgroundColor: "whitesmoke", padding:5, marginTop: 40, borderRadius: 30, flexDirection: "row", alignItems: "center",justifyContent:"space-around" }}>
+          <Text allowFontScaling={false} style={{ fontSize: 15, marginTop: 20, color: "white" }}>Match Results</Text>
+
+          {playerDetail != null && <View style={{ width: 300, height: 80, backgroundColor: "#e9ecef", padding:5, marginTop: 30, borderRadius: 40, flexDirection: "row", alignItems: "center",justifyContent:"space-around" }}>
             <View><Text style={{ color:"#240046",fontSize:12 }}>Rank</Text><Text style={{ textAlign:"center",color:"#240046",fontWeight:600,fontSize:20 }}>{playerRank + 1}</Text></View>
             <View style={{width:55,height:55,borderRadius:50,borderColor:"green",borderWidth:2,alignItems:"center"}}><Image source={require("../../../assets/player2.png")} style={{ width: 50, height: 50, borderRadius: 50 }}></Image></View>
             {
               playerRank === 0 ? (
                 <View style={{margin:10}}>
                   <Text style={{color:"green",fontSize:15}}>Congratulations</Text>
-                  <Text style={{color:"#240046",fontWeight:600,fontSize:20}}>You Won  <FontAwesome name="rupee" size={15} color="#240046" /> 0.40</Text>
+                  <Text style={{color:"#240046",fontWeight:600,fontSize:20}}>You Won  <FontAwesome name="rupee" size={15} color="#240046" /> 2</Text>
                 </View>
               ) : 
               (
@@ -157,7 +197,7 @@ const WinnerRobot = (props) => {
                             player.name == playerNumber ?
                             <>
                                        <View style={{width:35,height:35,borderRadius:35,borderColor:"green",borderWidth:2,alignItems:"center"}}><Image source={require("../../../assets/player2.png")} style={{ width: 30, height: 30, borderRadius: 30,resizeMode:"contain" }}></Image></View>
-                                  <Text allowFontScaling={false} style={{ color: "white",marginLeft:5,fontSize:10 }}>{player.name}</Text>
+                                  <Text allowFontScaling={false} style={{ color: "white",marginLeft:5,fontSize:10 }}> {player.name}</Text>
                             </>  
 
                       
@@ -165,7 +205,7 @@ const WinnerRobot = (props) => {
 
                           <>
                               <View style={{width:35,height:35,borderRadius:35,alignItems:"center",borderColor:"gray",borderWidth:2}}><Image source={require("../../../assets/player4.png")} style={{ width: 30, height: 30, borderRadius: 30,resizeMode:"contain" }}></Image></View>
-                              <Text allowFontScaling={false} style={{ color: "white",marginLeft:5,fontSize:10 }}>{player.name}</Text>
+                              <Text allowFontScaling={false} style={{ color: "white",marginLeft:5,fontSize:10 }}> {player.name}</Text>
 
                          </>  
                            }
@@ -197,7 +237,7 @@ const WinnerRobot = (props) => {
                     </View>
                     <View style={styles.box}>
                       {
-                        id ==0 ? <Text allowFontScaling={false} style={{ color: "white" }}><FontAwesome name="rupee" size={12} color="white" /> 0.4</Text>:
+                        id ==0 ? <Text allowFontScaling={false} style={{ color: "white" }}><FontAwesome name="rupee" size={12} color="white" />  2</Text>:
                         <Text allowFontScaling={false} style={{ color: "white" }}><FontAwesome name="rupee" size={12} color="white" />  0</Text>
                       }
                       
@@ -240,9 +280,6 @@ const WinnerRobot = (props) => {
         </ImageBackground>}
 
  
-
-
-
       {result != null && result.lost == props.currentPlayer &&
         <ImageBackground source={require("../../../assets/bg.png")} style={{ backgroundColor: "#03045e", flex: 1, height: Dimensions.get('screen').height, width: Dimensions.get('screen').width, alignItems: "center", paddingTop: 100 }}>
 
@@ -258,7 +295,6 @@ const WinnerRobot = (props) => {
           </View>
         </ImageBackground>}
 
-
       {result != null && result.winner == props.currentPlayer &&
         <ImageBackground source={require("../../../assets/bg.png")} style={{ backgroundColor: "#03045e", flex: 1, height: Dimensions.get('screen').height, width: Dimensions.get('screen').width, alignItems: "center", paddingTop: 100 }}>
 
@@ -272,12 +308,12 @@ const WinnerRobot = (props) => {
               <Text allowFontScaling={false} style={{ color: "white", fontSize: 18 }}> Home</Text>
             </TouchableOpacity>
           </View>
-        </ImageBackground>}
+        </ImageBackground>
+        }
 
         </>
 
   )
-
 
 }
 

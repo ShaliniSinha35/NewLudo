@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Ludo",
-    "slug": "ludonew",
+    "slug": "ludo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -29,9 +29,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "27c2ab0f-ba03-4fa4-891a-ca207dded6aa"
+        "projectId": "ab5b862d-699c-4a30-8eaf-6d78026765a5"
       }
     },
-    "owner": "shalini2"
+    "owner": "zenwebmaniasolutions"
   }
 }

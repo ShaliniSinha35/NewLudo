@@ -10,6 +10,8 @@ import Socket from '../../../utils/Socket';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FontAwesome } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
+
 export default Home = ({
   isStartGameModalVisible,
   onNewGameButtonPress,
@@ -24,7 +26,7 @@ export default Home = ({
   blue,
   onStart,
   twoPlayer, threePlayer, fourPlayer, mobileNumber,
-  setCurrentNextPlayer, setRobotGame
+  setCurrentNextPlayer, setRobotGame, storeRoomId
 
 }) => {
 
@@ -41,7 +43,8 @@ export default Home = ({
   const [randomNumber, setNumber] = useState("8680327678")
   const [findPlayer, setFindPlayer] = useState(false)
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [playerTwo, setPlayerTwo] = useState(null)
+  const [playerTwo, setPlayerTwo] = useState(null);
+  const [walletValue, setWalletValue] = useState(null)
 
   var cp = ''
   var np = ''
@@ -54,6 +57,26 @@ export default Home = ({
   }
 
 
+  const getWalletValue = async () => {
+
+    try {
+      const res = await axios.get(`https://ludo-b2qo.onrender.com/getUserData?userId=${mobileNumber}`);
+
+      const data = res.data
+
+      console.log("63", res.data[0].wallet)
+      setWalletValue(res.data[0].wallet)
+    }
+    catch (error) {
+      console.log(error)
+    }
+
+
+  }
+
+  useEffect(() => {
+    getWalletValue()
+  }, [walletValue])
 
 
   const playerList = [
@@ -109,7 +132,9 @@ export default Home = ({
 
 
     Socket.on('roomId', (roomId) => {
-      setRoomId(roomId);
+      setRoomId(roomId)
+      storeRoomId(roomId);
+
 
       // console.log("58",roomId)
     });
@@ -279,12 +304,38 @@ export default Home = ({
     <ImageBackground source={require("../../../assets/bg.png")} style={styles.container}>
 
       <>
-        <View style={{ position: "absolute", top: 10, right: 20, justifyContent: "center", alignItems: "center" }}>
+
+
+       <View style={{width:Dimensions.get('screen').width, height:80, position: "absolute", top:0,flexDirection:"row",justifyContent:"space-around",margin:20}}>
+
+        <View style={{flexDirection:"row"}}>
+        <View style={{width:55,height:55,borderRadius:50,borderColor:"#f6ae2d",borderWidth:2,alignItems:"center"}}><Image source={require("../../../assets/player2.png")} style={{ width: 50, height: 50, borderRadius: 50 }}></Image></View>
+        <Text style={{ color: "white", textAlign: "center", marginTop: 5, fontSize: 15, marginTop: 20 }}>  +91 {number}</Text>
+        </View>
+         <View style={{alignItems:"center"}}>
+
+           <TouchableOpacity style={{height:40,width:90,backgroundColor:"#008000",borderRadius:10,flexDirection:"row", alignItems:"center",padding:5,justifyContent:"space-around",elevation:5 }}>
+
+           <FontAwesome5 name="wallet" size={24} color="white" />
+
+           {walletValue ? <Text style={{ color: "white", textAlign: "center", marginTop: 5, fontSize: 22 }}> <FontAwesome name="rupee" size={18} color="white" /> {walletValue}</Text>
+            : <Text style={{ color: "white", textAlign: "center", marginTop: 5, fontSize: 22 }}> <FontAwesome name="rupee" size={18} color="white" /> 0 </Text>
+          }
+           </TouchableOpacity>
+
+          </View>
+           
+       </View>
+        {/* <View style={{ position: "absolute", top: 10, right: 20, justifyContent: "center", alignItems: "center" }}>
           <EvilIcons name="user" size={30} color="white" />
 
           <Text style={{ color: "white", textAlign: "center", marginTop: 5, fontSize: 15 }}>{number}</Text>
+          {walletValue ? <Text style={{ color: "white", textAlign: "center", marginTop: 5, fontSize: 15 }}> <FontAwesome name="rupee" size={12} color="white" /> {walletValue}</Text>
+            : <Text style={{ color: "white", textAlign: "center", marginTop: 5, fontSize: 15 }}> <FontAwesome name="rupee" size={12} color="white" /> 0 </Text>
+          }
 
-        </View>
+
+        </View> */}
 
 
       </>
@@ -294,24 +345,22 @@ export default Home = ({
         !findPlayer ?
           flag != '' ?
             <>
-        <Image source={require("../../../assets/applogo.png")} style={{position: "absolute", top: 20, height: 150, width: 150, resizeMode: "contain" }}></Image>
-    
-                <TouchableOpacity style={{width:150,height:60,flexDirection:"row",marginBottom:25,justifyContent:"center",backgroundColor:"#240046",borderWidth:1,borderColor:"white",borderRadius:10,alignItems:"center"}}>
-                  <View style={{margin:8}}>
-                  <MaterialCommunityIcons name="sword-cross" size={30} color="white" />
-                  </View>
-                  <View style={{margin:8}}>
-                  <Text allowFontScaling={false} style={{ color: "white", fontSize: 12 }}>Battle</Text>
-                  <Text allowFontScaling={false} style={{color: "white", fontSize: 22,fontWeight:600}}><FontAwesome name="rupee" size={12} color="white" /> 0.4</Text>
-                  </View>
-                </TouchableOpacity>
-           
+              {/* <Image source={require("../../../assets/applogo.png")} style={{ position: "absolute", top: 20, height: 150, width: 150, resizeMode: "contain" }}></Image> */}
+
+              <TouchableOpacity style={{ width: 120, height: 50, flexDirection: "row", marginBottom: 45, justifyContent: "center", backgroundColor: "#240046", borderWidth: 1, borderRadius: 10, alignItems: "center" }}>
+                <View style={{ margin: 8 }}>
+                  <MaterialCommunityIcons name="sword-cross" size={24} color="white" />
+                </View>
+                <View style={{ margin: 8 }}>
+                  <Text allowFontScaling={false} style={{ color: "whitesmoke", fontSize: 12 }}>Battle</Text>
+                  <Text allowFontScaling={false} style={{ color: "whitesmoke", fontSize: 18, fontWeight: 600 }}><FontAwesome name="rupee" size={12} color="white" /> 0.4</Text>
+                </View>
+              </TouchableOpacity>
+
 
               <View
                 style={[
                   styles.box,
-
-
                 ]}
               >
                 <>
@@ -322,7 +371,7 @@ export default Home = ({
                 </>
 
               </View>
-              <Text style={{color:"#ff8800",fontSize:18,marginBottom:10,fontWeight:500}}> VS </Text>
+              <Text style={{ color: "#ff8800", fontSize: 18, marginBottom: 10, fontWeight: 500 }}> VS </Text>
 
               <Animated.View
                 style={[
@@ -340,8 +389,8 @@ export default Home = ({
               </Animated.View>
 
 
-              <Text style={{ position: "absolute", bottom: 35,color: "white", marginBottom: 5 }}>Searching for opponent...</Text>
-              <Text style={{ position: "absolute", bottom: 15, color: "white", marginBottom: 5,fontSize:10,marginTop:10 }}>you'll lose the game & entry fee if you leave now or close the app.</Text>
+              <Text style={{ position: "absolute", bottom: 35, color: "white", marginBottom: 5 }}>Searching for opponent...</Text>
+              <Text style={{ position: "absolute", bottom: 15, color: "white", marginBottom: 5, fontSize: 10, marginTop: 10 }}>you'll lose the game & entry fee if you leave now or close the app.</Text>
             </>
 
             :
@@ -379,7 +428,7 @@ export default Home = ({
 
                 </View>
 
-               <Text style={{color:"#ff8800",fontSize:18,marginBottom:30,fontWeight:500}}> VS</Text>
+                <Text style={{ color: "#ff8800", fontSize: 18, marginBottom: 30, fontWeight: 500 }}> VS</Text>
                 <View
                   style={[
                     styles.box,

@@ -28,7 +28,7 @@ export default class GameRobot extends Component {
         // console.log(props)
         super(props);
         const { red, blue, yellow, green } = colors;
-        const { redName, blueName, yellowName, greenName, twoPlayer, threePlayer, fourPlayer, number, currentPlayer, nextPlayer } = props;
+        const { redName, blueName, yellowName, greenName, twoPlayer, threePlayer, fourPlayer, number, currentPlayer, nextPlayer,roomId } = props;
         this.intervalId = null
         this.rollingSound = new Audio.Sound();
         this.soundObject = new Audio.Sound();
@@ -72,7 +72,7 @@ export default class GameRobot extends Component {
             blueHeart: 3,
             greenHeart: 3,
             yellowHeart: 3,
-            remainingTime: 60, // 3 minutes in seconds
+            remainingTime: 180, // 3 minutes in seconds
             winnerArray: [],
             status: "warning",
             title: "You missed a turn!",
@@ -151,7 +151,25 @@ export default class GameRobot extends Component {
         this.clearAllTimers();
         Socket.off('getTimer');
         Socket.off('updateTimerState');
-        Socket.emit('disconnectUser', { user: this.state.playerNumber  })
+      
+
+        const { yellowName, blueName, greenName, redName, roomId } = this.props;
+        Socket.emit('deleteRoom', roomId)
+
+
+        
+        // if(redName!=""){
+        //     Socket.emit('disconnectUser', { user: redName  })
+        // }
+        // if(blueName!=""){
+        //     Socket.emit('disconnectUser', { user: blueName  })
+        // }
+        // if(greenName!=""){
+        //     Socket.emit('disconnectUser', { user: greenName  })
+        // }
+        // if(yellowName!=""){
+        //     Socket.emit('disconnectUser', { user: yellowName  })
+        // }
         // Socket.emit('disconnectUser', { user: this.state.activePlayer })
         // Socket.emit('disconnectSocket', { socket: this.state.currentPlayer })
         // Socket.emit('disconnectSocket', { socket: this.state.nextPlayer })
@@ -194,6 +212,8 @@ export default class GameRobot extends Component {
             // console.log(exception);
             return false; // Indicates failure
         }
+        
+   
     };
 
 
