@@ -28,7 +28,7 @@ export default class GameRobot extends Component {
         // console.log(props)
         super(props);
         const { red, blue, yellow, green } = colors;
-        const { redName, blueName, yellowName, greenName, twoPlayer, threePlayer, fourPlayer, number, currentPlayer, nextPlayer,roomId } = props;
+        const { redName, blueName, yellowName, greenName, twoPlayer, threePlayer, fourPlayer, number, currentPlayer, nextPlayer, roomId } = props;
         this.intervalId = null
         this.rollingSound = new Audio.Sound();
         this.soundObject = new Audio.Sound();
@@ -37,7 +37,7 @@ export default class GameRobot extends Component {
         this.state = {
             currentPlayer: currentPlayer,
             nextPlayer: nextPlayer,
-            playerNumber:number,
+            playerNumber: number,
             red: this.initPlayer(RED, red, redName),
             yellow: this.initPlayer(YELLOW, yellow, yellowName),
             green: this.initPlayer(GREEN, green, greenName),
@@ -134,8 +134,10 @@ export default class GameRobot extends Component {
             this.intervalId = setTimeout(() => {
                 this.onDiceRoll(true);
             }, 2000);
-        } else {
-            // Clear the interval if the turn is not YELLOW
+
+        }
+         else {
+            // Clear the interval if the turn is not YELLOW                                     
             clearInterval(this.intervalId);
         }
     }
@@ -151,13 +153,13 @@ export default class GameRobot extends Component {
         this.clearAllTimers();
         Socket.off('getTimer');
         Socket.off('updateTimerState');
-      
+
 
         const { yellowName, blueName, greenName, redName, roomId } = this.props;
         Socket.emit('deleteRoom', roomId)
 
 
-        
+
         // if(redName!=""){
         //     Socket.emit('disconnectUser', { user: redName  })
         // }
@@ -212,8 +214,8 @@ export default class GameRobot extends Component {
             // console.log(exception);
             return false; // Indicates failure
         }
-        
-   
+
+
     };
 
 
@@ -243,7 +245,7 @@ export default class GameRobot extends Component {
 
     retrieveData = async () => {
 
-
+let winnerArray1=[]
 
         const { yellowName, blueName, greenName, redName } = this.props;
 
@@ -255,10 +257,10 @@ export default class GameRobot extends Component {
                 const blueValue = await AsyncStorage.getItem('blue');
 
                 const values = [
-                    { key: 'red', value: redValue,name:redName },
-                    { key: 'yellow', value: yellowValue,name:blueName },
-                    { key: 'green', value: greenValue,name:greenName },
-                    { key: 'blue', value: blueValue,name:blueName },
+                    { key: 'red', value: redValue, name: redName },
+                    { key: 'yellow', value: yellowValue, name: blueName },
+                    { key: 'green', value: greenValue, name: greenName },
+                    { key: 'blue', value: blueValue, name: blueName },
                 ];
                 const sortedValues = values.sort((a, b) => b.value - a.value);
                 // const firstGreatest = sortedValues[0].key;
@@ -269,7 +271,7 @@ export default class GameRobot extends Component {
 
 
                 for (let i = 0; i < sortedValues.length; i++) {
-                    this.state.winnerArray.push(sortedValues[i])
+                    winnerArray1.push(sortedValues[i])
 
                 }
                 await AsyncStorage.removeItem('playerArray')
@@ -290,9 +292,9 @@ export default class GameRobot extends Component {
                 const blueValue = await AsyncStorage.getItem('blue');
 
                 const values = [
-                    { key: 'red', value: redValue,name:redName },
-                    { key: 'yellow', value: yellowValue,name:blueName },
-                    { key: 'blue', value: blueValue,name:blueName },
+                    { key: 'red', value: redValue, name: redName },
+                    { key: 'yellow', value: yellowValue, name: blueName },
+                    { key: 'blue', value: blueValue, name: blueName },
                 ];
                 const sortedValues = values.sort((a, b) => b.value - a.value);
                 const firstGreatest = sortedValues[0].key;
@@ -302,7 +304,7 @@ export default class GameRobot extends Component {
 
 
                 for (let i = 0; i < sortedValues.length; i++) {
-                    this.state.winnerArray.push(sortedValues[i])
+                    winnerArray1.push(sortedValues[i])
                 }
                 await AsyncStorage.removeItem('playerArray')
                 await AsyncStorage.setItem('playerArray', JSON.stringify(this.state.winnerArray))
@@ -313,14 +315,14 @@ export default class GameRobot extends Component {
                 console.log(error)
             }
         }
-        else {              
+        else {
 
             try {
                 const yellowValue = await AsyncStorage.getItem('yellow');
                 const blueValue = await AsyncStorage.getItem('blue');
                 const values = [
-                    { key: 'yellow', value: yellowValue,name:yellowName },
-                    { key: 'blue', value: blueValue,name:blueName },
+                    { key: 'yellow', value: yellowValue, name: yellowName },
+                    { key: 'blue', value: blueValue, name: blueName },
                 ];
                 const sortedValues = values.sort((a, b) => b.value - a.value);
                 const firstGreatest = sortedValues[0].key;
@@ -329,15 +331,19 @@ export default class GameRobot extends Component {
 
 
                 for (let i = 0; i < sortedValues.length; i++) {
-                    this.state.winnerArray.push(sortedValues[i])
+                    winnerArray1.push(sortedValues[i])
 
                 }
+
+                console.log("WinnerArray1",winnerArray1)
 
                 await AsyncStorage.removeItem('playerArray')
                 await AsyncStorage.setItem('playerArray', JSON.stringify(this.state.winnerArray))
             }
             catch (error) {
+
                 console.log(error)
+
             }
         }
 
@@ -605,7 +611,7 @@ export default class GameRobot extends Component {
         return {
             one: { position: playerColor == RED ? R1 : playerColor == YELLOW ? Y1 : playerColor == GREEN ? G1 : playerColor == BLUE ? B1 : null, name: ONE, color: playerColor, updateTime: time, oneCount: [], piecePosition: new Animated.Value(0) },
             two: { position: playerColor == RED ? R1 : playerColor == YELLOW ? Y1 : playerColor == GREEN ? G1 : playerColor == BLUE ? B1 : null, name: TWO, color: playerColor, updateTime: time, twoCount: [], piecePosition: new Animated.Value(0) },
-            three: { position: playerColor == RED ? R1 : playerColor == YELLOW ? Y1 : playerColor == GREEN ? G1 : playerColor == BLUE ? B1 : null, name: THREE, color: playerColor, updateTime: time, threeCount: [], piecePosition: new Animated.Value(0) },
+            three: { position: playerColor == RED ? R1 : playerColor == YELLOW ? Y1 : playerColor == GREEN ? G1 : playerColor == BLUE ? Y5 : null, name: THREE, color: playerColor, updateTime: time, threeCount: [], piecePosition: new Animated.Value(0) },
             four: { position: playerColor == RED ? R1 : playerColor == YELLOW ? Y1 : playerColor == GREEN ? G1 : playerColor == BLUE ? B1 : null, name: FOUR, color: playerColor, updateTime: time, fourCount: [], piecePosition: new Animated.Value(0) }
         }
     }
@@ -645,6 +651,8 @@ export default class GameRobot extends Component {
 
 
                 {/* {console.log("627", this.state.setIsTimerActive, this.state.currentPlayer)}// */}
+                {/* {console.log("648",this.state.turn)}
+                 */}
 
                 {
 
@@ -822,9 +830,9 @@ export default class GameRobot extends Component {
                 duration: 300,
                 useNativeDriver: false,
             }).start(async () => {
-        
+
                 this.setState({ isRolling: false, diceNumber: this.getRandomInt(), diceRollTestDataIndex: updatedDiceRollTestDataIndex });
-               
+
                 await new Promise(resolve => setTimeout(resolve, 100));
 
                 const { moves, diceNumber, turn, extraChance, redScore, yellowScore, greenScore, blueScore } = this.state;
@@ -846,15 +854,17 @@ export default class GameRobot extends Component {
                         randomInt = (randomInt + 1) * 1000
                         this.setState({ animateForSelection: false });
 
+
                         // this.onPieceSelection(randomPiece);
 
 
                         setTimeout(() => {
-                            this.onMoveSelected(randomPiece,true);
-
+                            this.onMoveSelected(randomPiece, true);
                             this.setupForTurnChange()
                         }, randomInt);
 
+
+                        
 
                     });
 
@@ -870,7 +880,7 @@ export default class GameRobot extends Component {
                         this.setState({ animateForSelection: false });
                         // this.onPieceSelection(randomPiece);
                         setTimeout(() => {
-                            this.onMoveSelected(randomPiece,true);
+                            this.onMoveSelected(randomPiece, true);
                         }, randomInt);
 
                     });
@@ -1159,7 +1169,6 @@ export default class GameRobot extends Component {
         return undefined;
     }
 
-
     didGetBonusWithNewPosition(piece) {
         let flag = false
 
@@ -1182,7 +1191,7 @@ export default class GameRobot extends Component {
 
         const checkIfPositionMatchesExistingPiece = (piece, player) => {
 
-        
+
             const { one, two, three, four } = player.pieces;
 
             let positionMatched = false;
@@ -1340,7 +1349,6 @@ export default class GameRobot extends Component {
         return false;
     }
 
-
     updatePlayerPieces(player) {
         const { moves } = this.state;
         // console.log("685", player)
@@ -1464,11 +1472,24 @@ export default class GameRobot extends Component {
     }
 
 
-    onPieceSelection = async (selectedPiece,value) => {
-        //  console.log(selectedPiece)
+    getRobotRandomInt() {
+        let randomInt = Math.floor(Math.random() * Math.floor(6));
+        
+       
+        if (Math.random() < 0.2) {
+            randomInt += 6;
+        }
     
+        return randomInt + 1;
+    }
+    
+
+
+    onPieceSelection = async (selectedPiece, value) => {
+        //  console.log(selectedPiece)
+
         const { timers, turn } = this.state
-     
+
         if (turn === YELLOW) {
             // Yellow player's turn, do not allow touch logic
             return;
@@ -1567,11 +1588,11 @@ export default class GameRobot extends Component {
 
     }
 
-    onMoveSelected = async (selectedPiece,value) => {
+    onMoveSelected = async (selectedPiece, value) => {
         //  console.log(selectedPiece)
-    
+
         const { timers, turn } = this.state
-     
+
         if (timers[turn]) {
             await clearTimeout(timers[turn]);
             await this.setState(prevState => ({
@@ -1746,7 +1767,7 @@ export default class GameRobot extends Component {
             // }
 
 
-            if (move == 6 ) {
+            if (move == 6 || this.state.extraChance >= 1) {
 
                 this.displayTimer();
             }
@@ -1860,7 +1881,6 @@ export default class GameRobot extends Component {
         let hasSix = this.state.moves.filter((move) => move == 6).length > 0;
         return (
             <PlayerBoxRobot
-
                 color={player.color}
                 playerName={player.playerName}
                 animateForSelection={this.state.animateForSelection && this.state.turn == player.player && hasSix}
@@ -1871,7 +1891,6 @@ export default class GameRobot extends Component {
                 customStyle={customStyle}
                 playerScore={playerScore}
                 getNextTurn={this.getNextTurn}
-
                 onPieceSelection={(selectedPiece) => {
                     if (this.state.turn == player.player) {
                         this.onPieceSelection(selectedPiece);

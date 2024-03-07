@@ -309,8 +309,10 @@ export default Home = ({
        <View style={{width:Dimensions.get('screen').width, height:80, position: "absolute", top:0,flexDirection:"row",justifyContent:"space-around",margin:20}}>
 
         <View style={{flexDirection:"row"}}>
-        <View style={{width:55,height:55,borderRadius:50,borderColor:"#f6ae2d",borderWidth:2,alignItems:"center"}}><Image source={require("../../../assets/player2.png")} style={{ width: 50, height: 50, borderRadius: 50 }}></Image></View>
-        <Text style={{ color: "white", textAlign: "center", marginTop: 5, fontSize: 15, marginTop: 20 }}>  +91 {number}</Text>
+        <View style={{width:45,height:45,borderRadius:40,borderColor:"#f6ae2d",borderWidth:2,alignItems:"center"}}>
+        <Image source={require("../../../assets/player2.png")} style={{ width: 40, height: 40, borderRadius: 50 }}></Image>
+        </View>
+        <Text style={{ color: "white", textAlign: "center", marginTop: 2, fontSize: 15, marginTop: 10 }}>  +91 {number}</Text>
         </View>
          <View style={{alignItems:"center"}}>
 
