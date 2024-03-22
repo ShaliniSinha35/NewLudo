@@ -18,16 +18,26 @@ const LoginScreen = () => {
     const [verified, setVerified] = useState(false)
 
     const getNumber = async () => {
-
-        let number = await AsyncStorage.getItem('user');
-
-        // console.log("27", number)
-
         try {
-            const res = await axios.get(`https://ludo-b2qo.onrender.com/verify?userId=${number}`);
-            const data = res.data;
+            let number = await AsyncStorage.getItem('user');
+            console.log("User ID:", number);
+           
+        
+            if (!number) {
+                console.log("User ID not found in AsyncStorage");
+                return; // or handle this case as appropriate
+            }
+            
+            // Convert number to string before sending the request
+            const userId = parseInt(number.replace(/\D/g, ''), 10);
 
-            if (data.length !== 0) {
+
+            const res = await axios.get(`https://ludo-b2qo.onrender.com/verify?userId=${userId}`);
+            const data = res.data;
+        
+            console.log("Response from server:", data);
+        
+            if (data && data.length > 0) {
                 setVerified(true);
                 navigation.navigate("App", {
                     mobile: parseInt(data[0].mobile)
@@ -37,13 +47,13 @@ const LoginScreen = () => {
             }
         } catch (error) {
             console.log("Error fetching data:", error);
-
+            // Handle errors here, e.g., show an error message to the user
         }
     };
-
+    
+    
     useEffect(() => {
         getNumber()
-
     })
 
  
@@ -86,9 +96,6 @@ const LoginScreen = () => {
 
     };
 
-
-
-   
 
     return (
         <ImageBackground source={require("../../assets/bg.png")} style={{ height: Dimensions.get('screen').height, width: Dimensions.get('screen').width }}>

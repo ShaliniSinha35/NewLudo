@@ -225,9 +225,7 @@ export default Home = ({
   //   onBlueInput('Player 1')
   //   onYellowInput('Player 2')
 
-
   // onNewGameButtonPress()
-
   // };
 
   const handleThree = () => {
